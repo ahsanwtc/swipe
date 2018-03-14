@@ -1,1 +1,1 @@
-# Tinder Swipe Card
+# Swipe Card Animation
