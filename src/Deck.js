@@ -90,9 +90,12 @@ class Deck extends Component {
             }
             
             return (
-                <View key={item.id} style={[styles.cardStyle, { zIndex: i * -1}]}>
+                <Animated.View 
+                    key={item.id} 
+                    style={[styles.cardStyle, { zIndex: i * -1 }, { top: 10 * (i - this.state.index) }]} // cascading style: { top: 10 * (i - this.state.index) }
+                >
                     {this.props.renderCard(item)}
-                </View>
+                </Animated.View>
             );            
         });
     }
