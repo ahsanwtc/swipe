@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
-import { View, Animated, PanResponder } from 'react-native';
+import { View, Animated, PanResponder, Dimensions } from 'react-native';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const SWIPE_THRESHOLD = 0.5 * SCREEN_WIDTH;
+const SWIPE_OUT_DURATION = 250;
 
 class Deck extends Component {
     
@@ -12,8 +16,15 @@ class Deck extends Component {
             onPanResponderMove: (e, gesture) => {
                 this.position.setValue({ x: gesture.dx, y: gesture.dy });
             },
-            onPanResponderRelease: () => {
-
+            onPanResponderRelease: (e, gesture) => {
+                if (gesture.dx > SWIPE_THRESHOLD) {
+                    this.forceSwipe('right');
+                } else if (gesture.dx < -SWIPE_THRESHOLD) {
+                    this.forceSwipe('left');
+                } else {
+                    this.resetPosition();
+                }
+                
             }
         });
         
@@ -21,15 +32,29 @@ class Deck extends Component {
         this.panResponder = panResponder;
     }
 
+    forceSwipe(direction) {
+        const x = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
+        Animated.timing(this.position, {
+            toValue: { x, y: 0 },
+            duration: SWIPE_OUT_DURATION
+        }).start();
+    }
+
     getCardStyle() {
         const rotate = this.position.x.interpolate({
-            inputRange: [-500, 0, 500],
+            inputRange: [ -SCREEN_WIDTH * 1.5, 0, SCREEN_WIDTH * 1.5 ],
             outputRange: ['-120deg', '0deg', '120deg']
         });
         return {
             ...this.position.getLayout(),
             transform: [{ rotate }]
         };
+    }
+
+    resetPosition() {
+        Animated.spring(this.position, {
+            toValue: { x: 0, y: 0 }
+        }).start();
     }
 
     renderCards() {
