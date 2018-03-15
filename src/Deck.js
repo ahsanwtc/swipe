@@ -37,6 +37,13 @@ class Deck extends Component {
         this.state = { index: 0 };
     }
 
+    componentWillReceiveProps(nextProps) {
+        // if the data list changed, reset the index to 0, so new list starts from 0
+        if (nextProps.data !== this.props.data) {
+            this.setState({ index: 0 });
+        }
+    }
+
     componentDidUpdate() {
         // andriod hack
         UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
