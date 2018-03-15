@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Animated, PanResponder, Dimensions } from 'react-native';
+import { View, Animated, PanResponder, Dimensions, LayoutAnimation, UIManager } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = 0.5 * SCREEN_WIDTH;
@@ -35,6 +35,13 @@ class Deck extends Component {
         
         this.panResponder = panResponder;
         this.state = { index: 0 };
+    }
+
+    componentDidUpdate() {
+        // andriod hack
+        UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+
+        LayoutAnimation.spring(); //animate any change happening to UI => cascading to cards to move up
     }
 
     forceSwipe(direction) {
